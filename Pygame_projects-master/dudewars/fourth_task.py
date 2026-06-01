@@ -12,22 +12,26 @@ screen.fill(THECOLORS['black'])
 
 font = pygame.font.SysFont(None, 80)
 
-try: 
-    with open("data.txt", "r") as file:
-        print("Reading file...")
-        content = file.read()
-        print(content)
+# try: 
+#     with open("data.txt", "r") as file:
+#         print("Reading file...")
+#         content = file.read()
+#         print(content)
        
-except FileNotFoundError:
-    with open("data.txt", "w") as file:
-        file.write("")
-    print("File created")
+# except FileNotFoundError:
+#     with open("data.txt", "w") as file:
+#         file.write("")
+#     print("File created")
 
 # cell_size = int(input("Enter cell size: "))
 cell_size = 100 # temporarly for debuging purposes 
 colors_list = ['black', 'green', 'blue', 'red', 'violet',
                'purple', 'yellow', 'orange', 'brown', 'cyan']
 cnt = 0
+
+cols = size[0] // cell_size
+rows = size[1] // cell_size
+total_cells = cols * rows
 
 # some bullshit idk
 # def rand_nums(x, y):
@@ -66,9 +70,9 @@ cnt = 0
 #     pygame.draw.line(screen, THECOLORS['white'], (0, y), (size[0], y))
 
 # new variant (filling canvas with lines (cells))
-for pos in range(0, size[0] + cell_size, cell_size):
-    pygame.draw.line(screen, THECOLORS['white'], (pos, 0), (pos, size[0]))
-    pygame.draw.line(screen, THECOLORS['white'], (0, pos), (size[0], pos))
+# for pos in range(0, size[0] + cell_size, cell_size):
+#     pygame.draw.line(screen, THECOLORS['white'], (pos, 0), (pos, size[0]))
+#     pygame.draw.line(screen, THECOLORS['white'], (0, pos), (size[0], pos))
     # draw_one(pos, pos)
 
 # another bullshit, old design
@@ -89,29 +93,42 @@ for pos in range(0, size[0] + cell_size, cell_size):
 #         else:
 #             screen.blit(text, (x + 20, y + 25))
 
-    with open("data.txt", "w") as file:
-        for _ in range(10):
-            rand_num = random.randint(1, size[0] // cell_size)
-            file.write((str(rand_num)) + " ")
+with open("data.txt", "w") as file:
+    for _ in range(10):
+        rand_num = random.randint(1, total_cells)
+        file.write((str(rand_num)) + " ")
     
 with open("data.txt", "r") as file:
     cells_to_paint = [int(num) for num in file.read().split()]
 
-cell_number = 1 # for tracking 
+color_cell_number = 1 # for tracking 
 
-for y in (0, size[1], cell_size):
-    for x in (0, size[0], cell_size):
+for y in range(0, size[1], cell_size):
+    pygame.draw.line(screen, THECOLORS['white'], (0, y), (size[0], y))  
+    for x in range(0, size[0], cell_size):
+        pygame.draw.line(screen, THECOLORS['white'], (x, 0), (x, size[0]))
 
-        if cell_number in cells_to_paint:
+        if color_cell_number in cells_to_paint:
             color = random.choice(colors_list)
 
             r = pygame.Rect(x, y, cell_size, cell_size)
             pygame.draw.rect(screen, THECOLORS[color], r)
+            pygame.display.flip()
 
-            text = font.render(str(cell_number), True, THECOLORS["white"])
+            # text = font.render(str(cell_number), True, THECOLORS["white"])
+            # screen.blit(text, (x + 32, y + 25))
+        color_cell_number += 1
+        number = x // cell_size
+        text = font.render(str(number), True, THECOLORS["white"])
+
+        if (number < 10):
             screen.blit(text, (x + 32, y + 25))
+        else:
+            screen.blit(text, (x + 20, y + 25))
+       
 
-            cell_number += 1
+        # text = font.render(str(number), True, THECOLORS["white"])
+        # screen.blit(text, (x + 32, y + 25))
 
 while True:
     for event in pygame.event.get():
