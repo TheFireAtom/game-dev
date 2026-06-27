@@ -8,7 +8,7 @@ WINDOW_WIDTH, WINDOW_HEIGHT = 1280, 720
 display_surface = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
 pygame.display.set_caption("Space shooter")
 running = True
-player_direction = 1
+clock = pygame.time.Clock()
 
 # old method
 # player_move_left = False
@@ -21,7 +21,9 @@ x = 100
 
 # importing an image
 player_surf = pygame.image.load(join("5games-main", "space shooter", "images", "player.png")).convert_alpha()
-player_rect = player_surf.get_frect(midleft = (0, WINDOW_HEIGHT / 2))
+player_rect = player_surf.get_frect(midleft = (WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2))
+player_direction = pygame.math.Vector2(1, 0)
+player_speed = 300
 
 laser_surf = pygame.image.load("5games-main/space shooter/images/laser.png")
 laser_rect = laser_surf.get_frect(bottomleft=(20, WINDOW_HEIGHT - 20))
@@ -32,10 +34,14 @@ meteor_rect = meteor_surf.get_frect(center = (WINDOW_WIDTH / 2, WINDOW_HEIGHT / 
 star_surf = pygame.image.load("5games-main/space shooter/images/star.png").convert_alpha()
 star_position = [(randint(0, WINDOW_WIDTH), randint(0, WINDOW_HEIGHT)) for _ in range(20)]
 
-
+# rect 
+# plain_rect = pygame.FRect(left, top, width, height)
 
 # print(star_position)
 while running:
+    dt = clock.tick(60) / 1000
+    print(clock.get_fps())
+
     # event loop
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -63,9 +69,7 @@ while running:
     #     player_rect.right += 0.2
 
     # new method
-    player_rect.x += player_direction * 0.4
-    if player_rect.left < 0 or player_rect.right > WINDOW_WIDTH:
-        player_direction *= -1
+    player_rect.center += player_direction * player_speed * dt
     display_surface.blit(player_surf, player_rect)
 
     pygame.display.update()
