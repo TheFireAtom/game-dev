@@ -61,7 +61,7 @@ pygame.key.set_repeat(0)
 
 # print(star_position)
 while running:
-    dt = clock.tick() / 1000
+    dt = clock.tick() / 1000    
     # print(clock.get_fps())
 
     # event loop

@@ -14,6 +14,12 @@ class Player(pygame.sprite.Sprite):
         super().__init__(groups)
 
         self.animation = pygame.image.load_animation(join("My-games", "Platformer", "assets", "Mushroom.gif"))
+        self.frames = list(self.animation)
+
+        
+
+
+        
 
 all_sprites = pygame.sprite.Group()
 player = Player(all_sprites)
@@ -25,6 +31,11 @@ while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
+
+    display_surface.fill("gray12")
+
+    all_sprites.draw(display_surface)
+
+    pygame.display.update()
             
 pygame.quit()
-            
