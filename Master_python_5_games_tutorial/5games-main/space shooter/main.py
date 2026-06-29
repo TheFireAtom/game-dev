@@ -40,7 +40,6 @@ surf = pygame.Surface((100, 200))
 surf.fill("orange")
 x = 100
 
-
 all_sprites = pygame.sprite.Group()
 player = Player(all_sprites)
 
