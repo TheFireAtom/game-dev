@@ -1,6 +1,5 @@
 import pygame
 from os.path import join
-import sys
 
 pygame.init()
 WINDOW_WIDTH, WINDOW_HEIGHT = 1080, 720
@@ -10,16 +9,35 @@ running = True
 clock = pygame.Clock()
 
 class Player(pygame.sprite.Sprite):
+    
     def __init__(self, groups):
         super().__init__(groups)
 
-        self.animation = pygame.image.load_animation(join("My-games", "Platformer", "assets", "Mushroom.gif"))
-        self.frames = list(self.animation)
+        spritesheet = pygame.image.load(join("My-games", "Platformer", "assets", "Guy-Sheet")).convert_alpha()
+        self.frame_width = 32
+        self.frame_height = 32
 
+        animations = ["idle", "walk", "jump", "hurt"]
         
+        self.frames = {anim: [] for anim in animations}
 
+        frames_per_row = spritesheet.get_width() // self.frame_width
 
+        for row, anim_name in enumerate(animations):
+            y = row * self.frame_height
+            for col in range(frames_per_row):
+                x = col * self.frame_width
+                frame = spritesheet.subsurface(x, y, self.frame_width, self.frame_height)
+                self.frames[anim_name].append(frame)
+
+        self.current_animation = "idle"
+        self.current_frame = 0
+        self.image = self.frames[self.current_animation][0]
+
+        self.rect = self.image.get_frect(midleft=(WINDOW_WIDTH, WINDOW_HEIGHT))
         
+        assert self.image is not None
+        assert self.rect is not None
 
 all_sprites = pygame.sprite.Group()
 player = Player(all_sprites)
