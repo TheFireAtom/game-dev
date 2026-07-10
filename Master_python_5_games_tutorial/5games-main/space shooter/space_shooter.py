@@ -15,13 +15,13 @@ class Player(pygame.sprite.Sprite):
         self.player_speed = 300
 
     def update(self, dt):
-        # print("Ship is being updated")
-        assert self.rect is not None
-        keys = pygame.key.get_pressed()
-        self.player_direction.x = keys[pygame.K_RIGHT] - keys[pygame.K_LEFT]
-        self.player_direction.y = keys[pygame.K_DOWN] - keys[pygame.K_UP]
-        self.player_direction = self.player_direction.normalize() if self.player_direction else self.player_direction
-        self.rect.center += self.player_direction * self.player_speed * dt
+            #print("Ship is being updated")
+            assert self.rect is not None
+            keys = pygame.key.get_pressed()
+            self.player_direction.x = keys[pygame.K_RIGHT] - keys[pygame.K_LEFT]
+            self.player_direction.y = keys[pygame.K_DOWN] - keys[pygame.K_UP]
+            self.player_direction = self.player_direction.normalize() if self.player_direction else self.player_direction
+            self.rect.center += self.player_direction * self.player_speed * dt
 
 # general setup
 pygame.init()
@@ -64,12 +64,12 @@ while running:
     dt = clock.tick() / 1000    
     # print(clock.get_fps())
 
+    all_sprites.update(dt)
+
     # event loop
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
-
-    all_sprites.update(dt)
 
     # draw the game
     display_surface.fill("gray13")
