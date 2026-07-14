@@ -25,7 +25,7 @@ class Player(pygame.sprite.Sprite):
         self.player_speed = 0.5
 
         self.timer = pygame.time.get_ticks()
-        self.animation_delay = 250
+        self.animation_delay = 125
 
         # (self.test, self.test)
         self.spritesheet_scaled = pygame.transform.scale_by(self.spritesheet, 5)
@@ -53,10 +53,11 @@ class Player(pygame.sprite.Sprite):
                 frame = self.spritesheet_scaled.subsurface(x, y, self.frame_width, self.frame_height)
                 print(frame)
                 self.frames[anim_name].append(frame)
+                print(len(self.frames))
 
         self.current_animation = "idle"
 
-        print("Frames length: ", len(self.frames))
+        # print("Frames length: ", len(self.frames))
     
         self.image = self.frames[self.current_animation][0]
 
@@ -83,7 +84,7 @@ class Player(pygame.sprite.Sprite):
         if current_time - self.timer >= self.animation_delay:
             for x in range(2):
                 animation_state += x
-                print(animation_state)
+                # print(animation_state)
                 self.timer = current_time
 
             if self.keys[pygame.K_d] or self.keys[pygame.K_a]:
@@ -100,8 +101,6 @@ class Player(pygame.sprite.Sprite):
     # 2. If w is pressed I need to move char.y a little high, like by N 
     # 3. If a or d is pressed I need to move character left or right
     # 4. Also, I need to change frames somehow.
-
-
 
 all_sprites = pygame.sprite.Group()
 player = Player(all_sprites)
@@ -123,3 +122,4 @@ while running:
 
     pygame.display.update()
             
+pygame.quit()
