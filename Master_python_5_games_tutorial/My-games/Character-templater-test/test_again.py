@@ -19,14 +19,23 @@ class Player(pygame.sprite.Sprite):
         self.facing_right = True
 
         self.spritesheet_walk_right = pygame.image.load(join("My-games", "Character-templater-test", "assets", "32x32_chibi_template_walk-Sheet.png")).convert_alpha()
+        self.spritesheet_idle = pygame.image.load(join("My-games", "Character-templater-test", "assets", "32x32_chibi_template_idle-Sheet.png")).convert_alpha()
+        self.spritesheet_jump = pygame.image.load(join("My-games", "Character-templater-test", "assets", "32x32_chibi_template_jump-Sheet.png")).convert_alpha()
+
         
         self.spritesheet_walk_right_scaled = pygame.transform.scale_by(self.spritesheet_walk_right, 4)
+        self.spritesheet_idle_scaled = pygame.transform.scale_by(self.spritesheet_idle, 4)
+        self.spritesheet_jump_scaled = pygame.transform.scale_by(self.spritesheet_jump, 4)
 
         self.frame_width = 128
         self.frame_height = 128
 
         self.frames_walk_right = []
         self.frames_walk_left = []
+        # self.frames_idle_right = []
+        # self.frames_idle_left = []
+        self.frames_idle = []
+        self.frames_jump = []
 
         self.image = self.spritesheet_walk_right_scaled.subsurface(0, 0, self.frame_width, self.frame_height)
         self.rect = self.image.get_frect()
@@ -35,6 +44,8 @@ class Player(pygame.sprite.Sprite):
 
         spritesheet_read(self, self.spritesheet_walk_right_scaled, self.frames_walk_right)
         spritesheet_read(self, self.spritesheet_walk_left_scaled, self.frames_walk_left)
+        spritesheet_read(self, self.spritesheet_idle_scaled, self.frames_idle)
+        spritesheet_read(self, self.spritesheet_jump_scaled, self.frames_jump)
         
         self.keys = pygame.key.get_pressed()
 
@@ -47,19 +58,29 @@ class Player(pygame.sprite.Sprite):
 
     def update(self):
 
+        self.keys = pygame.key.get_pressed()
+
         if pygame.time.get_ticks() - self.timer >= self.delay:
             saved_position = self.rect.midleft
             self.frame_index += 1 
-            if self.player_direction.x > 0:
-                self.image = self.frames_walk_right_scaled[self.frame_index % len(self.frames_right)]
+
+            if self.player_direction.x > 0 and self.player_direction.y != 0:
+                self.image = self.frames_jump[self.frame_index % len(self.frames_jump)]
+            elif self.player_direction.x < 0 and self.player_direction.y != 0:
+                self.image = self.frames_jump[self.frame_index % len(self.frames_jump)]
+            elif self.player_direction.x > 0:
+                self.image = self.frames_walk_right[self.frame_index % len(self.frames_walk_right)]
             elif self.player_direction.x < 0:
-                self.image = self.frames_walk_left_scaled[self.frame_index % len(self.frames_left)]
+                self.image = self.frames_walk_left[self.frame_index % len(self.frames_walk_left)]
+            elif self.player_direction.y != 0:
+                self.image = self.frames_jump[self.frame_index % len(self.frames_jump)]
+            else:
+                self.image = self.frames_idle[self.frame_index % len(self.frames_idle)]
             # elif self.facing_right:
             #     self.image = self.frames_idle_right[self.frame_index % len(self.frames_idle_right)]
             # elif self.facing_right == False:
             #     self.image = self.frames_idle_left[self.frame_index % len(self.frames_idle_left)]
 
-            
             self.rect = self.image.get_frect(midleft=saved_position)
             self.timer = pygame.time.get_ticks()
 
@@ -69,13 +90,12 @@ class Player(pygame.sprite.Sprite):
             self.facing_right = True
         elif self.keys[pygame.K_a]:
             self.facing_right = False
-        if self.keys[pygame.K_SPACE]:
-            self.projectile_active = True
-            self.shoot_projectile()
+        # if self.keys[pygame.K_SPACE]:
+        #     self.projectile_active = True
+        #     self.shoot_projectile()
 
         self.player_direction.x = self.keys[pygame.K_d] - self.keys[pygame.K_a]
         self.player_direction.y = self.keys[pygame.K_s] - self.keys[pygame.K_w]
-
 
         self.player_direction = self.player_direction.normalize() if self.player_direction else self.player_direction
         self.rect.center += self.player_direction * self.player_speed * dt

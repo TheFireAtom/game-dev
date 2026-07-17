@@ -45,7 +45,7 @@ class Projectile(pygame.sprite.Sprite):
         self.spritesheet_left_scaled = pygame.transform.flip(self.spritesheet_right_scaled, True, False)
 
         spritesheet_read(self, self.spritesheet_left_scaled, self.frames_left)
-        self.image = spritesheet_left_scaled.
+        # self.image = spritesheet_left_scaled.
 
     def update(self):
         if self.is_active:
