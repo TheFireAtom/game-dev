@@ -12,7 +12,7 @@ clock = pygame.Clock()
 max_coins = 5
 coins = []
 coin_timer = pygame.time.get_ticks()
-coin_delay = 150
+coin_delay = 75
 
 all_sprites = pygame.sprite.Group()
 coin_group = pygame.sprite.Group()
@@ -26,7 +26,7 @@ def spawncoin():
     global coin_timer
     if len(coins) < max_coins:
         if pygame.time.get_ticks() - coin_timer >= coin_delay:
-            for i in range(max_coins):
+            for _ in range(max_coins):
                 x = randint(10, WINDOW_WIDTH-10)
                 y = randint(10, WINDOW_HEIGHT-10)
                 coin = Coin(x, y)
@@ -38,6 +38,9 @@ def spawncoin():
 class Coin(pygame.sprite.Sprite):
     def __init__(self, x, y, *groups):
         super().__init__(*groups)
+
+        self.coin_timer = pygame.time.get_ticks()
+        self.coin_delay = 75
 
         # self.frame_width = 128
         # self.frame_height = 128
@@ -54,7 +57,17 @@ class Coin(pygame.sprite.Sprite):
 
         self.rect.x = x
         self.rect.y = y
-    
+        self.frame_index = 0
+
+    def update(self):
+        if pygame.time.get_ticks() - self.coin_timer >= self.coin_delay:
+            saved_position = self.rect.midleft
+            self.frame_index += 1
+            self.image = self.frames_coinflip[self.frame_index % len(self.frames_coinflip)]
+
+            self.rect = self.image.get_frect(midleft=saved_position)
+            self.coin_timer = pygame.time.get_ticks()
+
 class Player(pygame.sprite.Sprite):
     def __init__(self, *groups):
         super().__init__(*groups)
@@ -167,6 +180,8 @@ while running:
 
     player.update()
     player.controls()
+
+    coin_group.update()
 
     pygame.sprite.spritecollide(player, coin_group, True)
 
