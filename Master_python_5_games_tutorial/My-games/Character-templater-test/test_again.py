@@ -1,13 +1,80 @@
 import pygame
 from os.path import join
+import sys
 from random import randint
 
 pygame.init()
 WINDOW_WIDTH, WINDOW_HEIGHT = 1080, 720
 FRAME_WIDTH, FRAME_HEIGHT = 128, 128
 main_display = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
-running = True
+running = False
 clock = pygame.Clock()
+
+def spritesheet_read(spritesheet, frames):
+    for x in range(int(spritesheet.get_width() / FRAME_WIDTH)):
+        frame = spritesheet.subsurface(x*FRAME_WIDTH, 0, FRAME_WIDTH, FRAME_HEIGHT)
+        frames.append(frame)
+
+def update(timer, delay, frame_index, frames, image, rect):
+        if pygame.time.get_ticks() - timer >= delay:
+            saved_position = rect.midleft
+            frame_index += 1
+            image = frames[frame_index % len(frames)]
+
+            rect = image.get_frect(midleft=saved_position)
+            timer = pygame.time.get_ticks()
+            return image
+
+def start_menu():
+    global running
+
+    timer = pygame.time.get_ticks()
+    delay = 150
+    frame_index = 0
+    spritesheet_start_button = pygame.image.load(join("My-games", "Character-templater-test", "assets", "Start_button-Sheet.png")).convert_alpha()
+    spritesheet_start_button_scaled = pygame.transform.scale_by(spritesheet_start_button, 4)
+    frames_start_button = []
+    spritesheet_read(spritesheet_start_button_scaled, frames_start_button)
+
+    update(timer, delay, frame_index, frames_start_button, spritesheet_start_button_scaled, spritesheet_start_button_scaled.get_frect())
+
+    print(frames_start_button)
+
+    current_frame = frames_start_button[0]
+
+    while True and not running:
+
+        mouse = pygame.mouse.get_pos()
+
+        main_display.fill("white")
+
+        play_button = spritesheet_start_button_scaled.subsurface(0, 0, FRAME_WIDTH, FRAME_HEIGHT).get_frect()
+        quit_button = pygame.Rect(600, 600, 100, 100)
+
+        play_button.center = WINDOW_WIDTH / 2 + 16, WINDOW_HEIGHT / 2 - 32 # idk why I need to do those math operations here
+
+        main_display.blit(current_frame, play_button)
+
+        local_timer = pygame.time.get_ticks()
+        local_delay = 150
+
+        for event in pygame.event.get():
+
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit
+            if event.type == pygame.MOUSEBUTTONDOWN:
+
+                if play_button.collidepoint(mouse):
+                    # current_frame = update(timer, delay, frame_index, frames_start_button, spritesheet_start_button_scaled, spritesheet_start_button_scaled.get_frect())
+                    current_frame = frames_start_button[1]
+                    play_button = spritesheet_start_button_scaled.get_frect()
+                    running = True
+                    local_timer = pygame.time.get_ticks()
+                if quit_button.collidepoint(mouse):
+                    running = False
+        
+        pygame.display.update()
 
 max_coins = 5
 coins = []
@@ -17,18 +84,13 @@ coin_delay = 75
 all_sprites = pygame.sprite.Group()
 coin_group = pygame.sprite.Group()
 
-def spritesheet_read(self, spritesheet, frames):
-    for x in range(int(spritesheet.get_width() / FRAME_WIDTH)):
-        frame = spritesheet.subsurface(x*FRAME_WIDTH, 0, FRAME_WIDTH, FRAME_HEIGHT)
-        frames.append(frame)
-
 def spawncoin():
     global coin_timer
     if len(coins) < max_coins:
         if pygame.time.get_ticks() - coin_timer >= coin_delay:
             for _ in range(max_coins):
-                x = randint(10, WINDOW_WIDTH-10)
-                y = randint(10, WINDOW_HEIGHT-10)
+                x = randint(10, WINDOW_WIDTH - FRAME_WIDTH - 10)
+                y = randint(10, WINDOW_HEIGHT - FRAME_HEIGHT - 10)
                 coin = Coin(x, y)
                 coins.append(coin)
                 coin_group.add(coin)
@@ -53,7 +115,7 @@ class Coin(pygame.sprite.Sprite):
 
         self.frames_coinflip = []    
 
-        spritesheet_read(self, self.spritesheet_coin_scaled, self.frames_coinflip)
+        spritesheet_read(self.spritesheet_coin_scaled, self.frames_coinflip)
 
         self.rect.x = x
         self.rect.y = y
@@ -98,10 +160,10 @@ class Player(pygame.sprite.Sprite):
 
         self.spritesheet_walk_left_scaled = pygame.transform.flip(self.spritesheet_walk_right_scaled, True, False)
 
-        spritesheet_read(self, self.spritesheet_walk_right_scaled, self.frames_walk_right)
-        spritesheet_read(self, self.spritesheet_walk_left_scaled, self.frames_walk_left)
-        spritesheet_read(self, self.spritesheet_idle_scaled, self.frames_idle)
-        spritesheet_read(self, self.spritesheet_jump_scaled, self.frames_jump)
+        spritesheet_read(self.spritesheet_walk_right_scaled, self.frames_walk_right)
+        spritesheet_read(self.spritesheet_walk_left_scaled, self.frames_walk_left)
+        spritesheet_read(self.spritesheet_idle_scaled, self.frames_idle)
+        spritesheet_read(self.spritesheet_jump_scaled, self.frames_jump)
         
         self.keys = pygame.key.get_pressed()
 
@@ -163,7 +225,10 @@ class Player(pygame.sprite.Sprite):
 
 player = Player(all_sprites)
 
+start_menu()
+
 while running:
+
     dt = clock.tick(60) / 1000
     clock.get_fps()
 
