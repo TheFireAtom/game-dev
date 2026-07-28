@@ -46,6 +46,8 @@ class Player(pygame.sprite.Sprite):
         self.keys = pygame.key.get_pressed()
 
         if pygame.time.get_ticks() - self.timer >= self.delay:
+            assert self.rect is not None
+
             saved_position = self.rect.midleft
             self.frame_index += 1 
 
@@ -70,6 +72,8 @@ class Player(pygame.sprite.Sprite):
             self.timer = pygame.time.get_ticks()
 
     def controls(self):
+        assert self.rect is not None
+        from main import dt
 
         if self.keys[pygame.K_d]:
             self.facing_right = True

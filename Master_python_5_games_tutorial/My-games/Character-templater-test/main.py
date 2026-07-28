@@ -2,11 +2,12 @@ import pygame
 from os.path import join
 from constants import WINDOW_WIDTH, WINDOW_HEIGHT
 from start_menu import start_menu
+from player import Player
 
 pygame.init()
 display_surface = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
 pygame.display.set_caption("Character template test")
-running = True
+running = start_menu(display_surface)
 clock = pygame.Clock()
 
 start_menu(display_surface)
@@ -23,7 +24,7 @@ while running:
 
     display_surface.fill("gray14")
 
-    pygame.display.update(dt)
+    pygame.display.update()
 
     all_sprites.draw(display_surface)
 
