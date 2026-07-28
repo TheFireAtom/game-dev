@@ -15,7 +15,7 @@ def start_menu(main_display):
     spritesheet_read(spritesheet_start_button_scaled, frames_start_button)
     #print(frames_start_button)
 
-    #update(timer, delay, frame_index, frames_start_button, spritesheet_start_button_scaled, spritesheet_start_button_scaled.get_frect())
+    update(timer, delay, frame_index, frames_start_button, spritesheet_start_button_scaled, spritesheet_start_button_scaled.get_frect())
 
     #print(frames_start_button)
 
@@ -48,9 +48,10 @@ def start_menu(main_display):
                 if play_button.collidepoint(mouse):
                     # current_frame = update(timer, delay, frame_index, frames_start_button, spritesheet_start_button_scaled, spritesheet_start_button_scaled.get_frect())
                     current_frame = frames_start_button[1]
-                    play_button = spritesheet_start_button_scaled.get_frect()
+                    #play_button = spritesheet_start_button_scaled.get_frect()
+                    main_display.blit(current_frame, play_button)
                     return True
-                    local_timer = pygame.time.get_ticks()
+                    # local_timer = pygame.time.get_ticks()
                 if quit_button.collidepoint(mouse):
                     return False
         

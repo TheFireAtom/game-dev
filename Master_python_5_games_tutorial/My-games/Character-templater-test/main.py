@@ -10,12 +10,13 @@ pygame.display.set_caption("Character template test")
 running = start_menu(display_surface)
 clock = pygame.Clock()
 
-start_menu(display_surface)
-
 all_sprites = pygame.sprite.Group()
 player = Player(all_sprites)  
 
+start_menu(display_surface)
+
 while running:
+
     dt = clock.tick(60)
 
     for event in pygame.event.get():
